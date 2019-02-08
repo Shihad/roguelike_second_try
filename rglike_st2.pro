@@ -10,9 +10,10 @@ HEADERS += \
     crt.h
 
 
-
 unix|win32: LIBS += -lsfml-graphics
 
 unix|win32: LIBS += -lsfml-system
 
 unix|win32: LIBS += -lsfml-window
+
+unix|win32: LIBS += -lsfml-audio
