@@ -4,6 +4,13 @@
 
 using namespace std;
 
+const int monsters_on_level=50; //количество монстров на уровне
+
+
+
+
+
+
 enum monsters {nobody,zombie, ghoul,vampire,necromancer,spectre,demon };
 enum hero_class{warrior, mage, monk, rogue};
 enum hero_race{human,dwarf,elf,hobbit,halfelf,naga};
@@ -17,6 +24,8 @@ enum direction{dir_right,dir_left,dir_up,dir_down};
 enum action{no_action, action_move,action_attack};
 
 enum groundtype{wall,ground,mud,shallow_water,deep_water,quicksand,trap,found_trap,ladder_up,ladder_down};
+
+
 
 
 struct cell {
@@ -124,13 +133,14 @@ struct monster {
 
 };
 
+
 const int levelmapwidth=220;
 const int levelmapheight=60;
 cell levelmap[levelmapwidth][levelmapheight];
+monster levelmonsters[monsters_on_level];
 
-
-
-hero create_hero() {
+hero create_hero(hero_class c, hero_race r, hero_gender g, hero *h) {
+    //переписать создание героя для нескольких классов. Поручить Аксеновой.
     hero myhero;
     myhero.hclass=warrior;
     myhero.hrace=elf;
@@ -139,7 +149,7 @@ hero create_hero() {
     return myhero;
 }
 
-//Подробно расписать движение героя. Поручить Аксеновой.
+//Подробно расписать движение героя. Сделано Аксеновой.
 void move_hero(direction dir, hero *h) {
     if (dir==dir_right) { //направо
         if (levelmap[h->x+1][h->y].monster==nobody) {
@@ -189,7 +199,7 @@ void move_hero(direction dir, hero *h) {
     }
 }
 
- //Подробно расписать движение монстра. Поручить Аристархову.
+ //Подробно расписать движение монстра. Сделано Аристарховым
 void move_monster(direction dir, monster *m) {
     if (dir==dir_right) { //направо
         if (levelmap[m->x+1][m->y].monster==nobody) {
@@ -250,7 +260,7 @@ void move_monster(direction dir, monster *m) {
 
 }
 
-//подробно расписать атаку. Шанько
+//подробно расписать атаку. Шанько доделать
 void attack_monster(hero *h, monster *m ) {
 
 
@@ -266,8 +276,15 @@ void attack_monster(hero *h, monster *m ) {
 }
 
 
-void find_monster_on_xy () {
 
+void wandering_monster () {
+    /*
+    2. Ходят противники
+    2а. Пробегаем по всем противникам, определяя (метрикой манхеттена) расстояние до игрока.
+    2б. Если оно меньше, чем заданное - двигаем монстра к игроку.
+    2в. Если больше - двигаем монстра случайным образом.
+
+*/
 }
 
 //Подробно расписать подбор предметов. Поручить Дорджееву
@@ -305,6 +322,18 @@ void create_map(){
             levelmap[j][i].type=static_cast<groundtype>(rand()%4);
         }
     }
+
+}
+
+monster create_monster(monsters m) {
+//процедура создания монстра
+    //задать здесь его параметры в зависимости от типа монстра.
+    //поручить Вострецову
+};
+
+ void create_monsters_on_level() {
+     //Используя массив levelmonsters и функцию create_monster
+    //расставить на карте в случайном порядке monsters_on_level монстров. Перед установкой проверить, можно ли его туда поставить. Аристархов
 
 }
 
@@ -429,11 +458,6 @@ int main(int argc, char *argv[])
     player.y=3;
     create_map();
 
-    monster monstro[50];
-    for (int i=0;i<50;i++) {
-        monstro[i].x=rand()%50;
-        monstro[i].y=rand()%50;
-    }
 
 
 
@@ -448,10 +472,11 @@ int main(int argc, char *argv[])
                 window.close();
         }
 
+
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
            move_hero(dir_left, &player );
         }
-    }
+
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
            move_hero(dir_right, &player );
@@ -466,24 +491,12 @@ int main(int argc, char *argv[])
            move_hero(dir_down, &player );
         }
 
+
+
         draw_levelmap_g(&window);
         draw_hero_g(&window,player.x,player.y);
 
-        for (int i=0;i<50;i++) {
-            draw_monster_g(&window,monstro[i].x,monstro[i].y);
-        }
 
-
-        for (int i=0;i<50;i++) {
-            int t=rand()%4;
-            if (t==0) move_monster(dir_right,&monstro[i]);
-
-            if (t==1) move_monster(dir_left,&monstro[i]);
-
-            if (t==2) move_monster(dir_up,&monstro[i]);
-
-            if (t==3) move_monster(dir_down,&monstro[i]);
-        }
 
         draw_levelmap();
 
